@@ -1,10 +1,12 @@
-def extract_features(flow):
+def extract_features(flow, dport, sport=0):
     duration = flow["last_seen"] - flow["start_time"]
 
     if duration <= 0:
         duration = 0.0001
 
     return {
+        "Source Port": sport,
+        "Destination Port": dport,
         "Flow Duration": duration * 1e6,  # microseconds
         "Total Fwd Packets": flow["fwd_packets"],
         "Total Backward Packets": flow["bwd_packets"],
