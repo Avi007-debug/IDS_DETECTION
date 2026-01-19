@@ -6,6 +6,7 @@ Real-time ML-based Intrusion Detection System with flow-level analysis, multi-st
 
 - **Multi-Stage Detection**: Normal filter → specialized attack classifiers (DoS, DDoS, PortScan, BruteForce, WebAttack)
 - **Real-Time Monitoring**: Live packet capture using Scapy with flow-based feature extraction
+- **Threat Intelligence Page**: Dedicated storage for up to 1,000 attacks with severity classification
 - **ML Models**: Trained on CICIDS-2017 dataset with 95%+ accuracy
 - **Web Dashboard**: React frontend for real-time visualization and alerts
 - **REST API**: FastAPI backend with prediction endpoints

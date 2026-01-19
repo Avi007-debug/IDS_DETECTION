@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Activity, Share2, AlertTriangle, CheckCircle2, Server, Terminal } from 'lucide-react';
+import Threats from './Threats';
 import './App.css';
 
 const API_BASE = 'http://127.0.0.1:8000';
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('dashboard');
   const [detections, setDetections] = useState([]);
   const [stats, setStats] = useState({
     totalPackets: 0,
@@ -30,13 +32,40 @@ function App() {
   };
 
   useEffect(() => {
-    fetchDetections();
-    const interval = setInterval(fetchDetections, 2000);
-    return () => clearInterval(interval);
-  }, []);
+    if (currentPage === 'dashboard') {
+      fetchDetections();
+      const interval = setInterval(fetchDetections, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [currentPage]);
+
+  if (currentPage === 'threats') {
+    return (
+      <div>
+        <nav className="nav-bar">
+          <button onClick={() => setCurrentPage('dashboard')} className="nav-btn">
+            📊 Dashboard
+          </button>
+          <button onClick={() => setCurrentPage('threats')} className="nav-btn active">
+            🚨 Threats
+          </button>
+        </nav>
+        <Threats />
+      </div>
+    );
+  }
 
   return (
-    <div className="dashboard">
+    <div>
+      <nav className="nav-bar">
+        <button onClick={() => setCurrentPage('dashboard')} className="nav-btn active">
+          📊 Dashboard
+        </button>
+        <button onClick={() => setCurrentPage('threats')} className="nav-btn">
+          🚨 Threats
+        </button>
+      </nav>
+      <div className="dashboard">
       <header className="dashboard-header">
         <div className="title-group">
           <h1>AI-Driven Intrusion Detection System</h1>
@@ -124,6 +153,7 @@ function App() {
           </tbody>
         </table>
       </div>
+    </div>
     </div>
   );
 }

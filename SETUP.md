@@ -92,6 +92,14 @@ npm run dev
 
 ## Testing the System
 
+### Understanding Data Storage
+
+The system uses two circular buffers:
+- **Dashboard (All Events)**: Stores last 500 detections (both normal and attacks)
+- **Threats Page**: Stores last 1,000 attacks only
+
+When limits are reached, oldest entries are automatically removed (FIFO - First In, First Out).
+
 ### Generate Normal Traffic
 
 ```powershell
