@@ -9,15 +9,20 @@ import signal
 import sys
 import json
 import urllib.request
+import os
 
 stop_event = threading.Event()
 
 def report_to_backend(data):
     try:
+        api_token = os.getenv("IDS_API_TOKEN", "your-secure-token-here-change-in-production")
         req = urllib.request.Request(
             "http://127.0.0.1:8000/report",
             data=json.dumps(data).encode('utf-8'),
-            headers={'Content-Type': 'application/json'}
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {api_token}'
+            }
         )
         with urllib.request.urlopen(req) as response:
             pass

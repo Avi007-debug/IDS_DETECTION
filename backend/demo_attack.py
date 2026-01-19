@@ -6,6 +6,7 @@ import random
 def run_simulation(type="dos", target_ip="192.168.31.29"):
     configs = {
         "dos": {"port": 1337, "name": "DoS", "desc": "High-intensity DoS attack"},
+        "ddos": {"port": 1336, "name": "DDoS", "desc": "Distributed Denial of Service"},
         "portscan": {"port": 1338, "name": "PortScan", "desc": "Aggressive Port Scanning"},
         "bruteforce": {"port": 1339, "name": "BruteForce", "desc": "SSH/FTP Brute Force Attempt"},
         "webattack": {"port": 1340, "name": "WebAttack", "desc": "SQL Injection / XSS Probe"}

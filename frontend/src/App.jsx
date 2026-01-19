@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Activity, Share2, AlertTriangle, CheckCircle2, Server, Terminal } from 'lucide-react';
+import { Shield, Activity, Share2, AlertTriangle, CheckCircle2, Server, Terminal, X } from 'lucide-react';
 import Threats from './Threats';
 import './App.css';
 
@@ -8,11 +8,14 @@ const API_BASE = 'http://127.0.0.1:8000';
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [detections, setDetections] = useState([]);
+  const [modelInfo, setModelInfo] = useState(null);
+  const [criticalAlerts, setCriticalAlerts] = useState([]);
   const [stats, setStats] = useState({
     totalPackets: 0,
     attacksDetected: 0,
     health: 100
   });
+  const [shownAlertTimestamps, setShownAlertTimestamps] = useState(new Set());
 
   const fetchDetections = async () => {
     try {
@@ -26,15 +29,49 @@ function App() {
         attacksDetected: attacks,
         health: data.length > 0 ? Math.max(0, 100 - (attacks / data.length) * 100).toFixed(1) : 100
       });
+
+      // Detect critical threats (confidence > 0.9) and avoid re-showing same detection
+      const newCritical = data.filter(d => d.is_attack && d.confidence > 0.9);
+      if (newCritical.length > 0) {
+        const latest = newCritical[0];
+        const detectionId = `${latest.timestamp}-${latest.src_ip}-${latest.attack_type}`;
+
+        // Only show alert if this specific detection hasn't been shown before
+        if (!shownAlertTimestamps.has(detectionId)) {
+          setShownAlertTimestamps(prev => new Set([...prev, detectionId]));
+          const alert = {
+            id: `${detectionId}-${Date.now()}`,
+            ...latest,
+            createdAt: Date.now()
+          };
+          setCriticalAlerts(prev => [alert, ...prev].slice(0, 3)); // Keep max 3 alerts
+        }
+      }
     } catch (error) {
       console.error('Error fetching detections:', error);
     }
   };
 
+  const fetchModelInfo = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/model-info`);
+      const data = await response.json();
+      setModelInfo(data);
+    } catch (error) {
+      console.error('Error fetching model info:', error);
+    }
+  };
+
+  const dismissAlert = (alertId) => {
+    setCriticalAlerts(prev => prev.filter(a => a.id !== alertId));
+  };
+
   useEffect(() => {
+    fetchModelInfo();
+    
     if (currentPage === 'dashboard') {
       fetchDetections();
-      const interval = setInterval(fetchDetections, 2000);
+      const interval = setInterval(fetchDetections, 3000); // 3s interval instead of 2s
       return () => clearInterval(interval);
     }
   }, [currentPage]);
@@ -64,7 +101,53 @@ function App() {
         <button onClick={() => setCurrentPage('threats')} className="nav-btn">
           🚨 Threats
         </button>
+        {modelInfo && (
+          <div style={{
+            marginLeft: 'auto',
+            fontSize: '0.75rem',
+            color: 'var(--text-secondary)',
+            padding: '0.5rem 1rem',
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '0.5rem'
+          }}>
+            Model v{modelInfo.model_version}
+          </div>
+        )}
       </nav>
+      
+      {/* Critical Alert Notifications */}
+      <div className="alert-container">
+        {criticalAlerts.map(alert => (
+          <div key={alert.id} className="critical-alert">
+            <AlertTriangle size={20} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>
+                CRITICAL: {alert.attack_type} Detected
+              </div>
+              <div style={{ fontSize: '0.875rem', opacity: 0.9 }}>
+                {alert.src_ip}:{alert.src_port} → {alert.dst_ip}:{alert.dst_port}
+              </div>
+              <div style={{ fontSize: '0.75rem', marginTop: '0.25rem', opacity: 0.7 }}>
+                Confidence: {(alert.confidence * 100).toFixed(1)}% | {alert.suggestion}
+              </div>
+            </div>
+            <button 
+              onClick={() => dismissAlert(alert.id)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+                padding: '0.5rem',
+                opacity: 0.7
+              }}
+            >
+              <X size={18} />
+            </button>
+          </div>
+        ))}
+      </div>
+      
       <div className="dashboard">
       <header className="dashboard-header">
         <div className="title-group">
@@ -121,7 +204,7 @@ function App() {
             ) : (
               detections.map((d, i) => (
                 <tr key={i}>
-                  <td>{d.timestamp.split(' ')[1]}</td>
+                  <td>{d.timestamp ? d.timestamp.split(' ')[1] : '-'}</td>
                   <td>
                     <div className="ip-flow">
                       <span title={`${d.src_ip}:${d.src_port}`}>{d.src_ip}</span>
@@ -141,7 +224,7 @@ function App() {
                       )}
                     </span>
                     <div style={{ fontSize: '10px', marginTop: '4px', opacity: 0.5 }}>
-                      Conf: {(d.confidence * 100).toFixed(1)}%
+                      Conf: {((d.confidence || 0) * 100).toFixed(1)}%
                     </div>
                   </td>
                   <td>

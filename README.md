@@ -21,6 +21,8 @@ Packets → Flow Aggregation → Feature Extraction → Stage 1 (Normal Filter) 
 
 See [SETUP.md](SETUP.md) for detailed installation instructions.
 
+**For Evaluation/Demo**: See [DEMO_SCRIPT.md](DEMO_SCRIPT.md) and [EVALUATION_QA.md](EVALUATION_QA.md)
+
 ```powershell
 # Backend
 cd backend
@@ -72,6 +74,15 @@ See [backend/DEMO_GUIDE.md](backend/DEMO_GUIDE.md) for full presentation guide.
 - Node.js 16+
 - Administrator privileges (for packet capture)
 - Npcap/WinPcap (Windows)
+
+## Documentation
+
+- **[SETUP.md](SETUP.md)** - Installation and configuration guide
+- **[DEMO_SCRIPT.md](DEMO_SCRIPT.md)** - Step-by-step demo scenarios
+- **[EVALUATION_QA.md](EVALUATION_QA.md)** - Evaluator questions & answers
+- **[METRICS.md](METRICS.md)** - Performance metrics and evaluation
+- **[EXPLAINABILITY.md](EXPLAINABILITY.md)** - SHAP model interpretation
+- **[backend/DEMO_GUIDE.md](backend/DEMO_GUIDE.md)** - Presentation guide
 
 ## Author
 
