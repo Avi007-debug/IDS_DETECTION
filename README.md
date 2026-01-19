@@ -6,6 +6,7 @@ Real-time ML-based Intrusion Detection System with flow-level analysis, multi-st
 
 - **Multi-Stage Detection**: Normal filter → specialized attack classifiers (DoS, DDoS, PortScan, BruteForce, WebAttack)
 - **Real-Time Monitoring**: Live packet capture using Scapy with flow-based feature extraction
+- **Threat Intelligence Page**: Dedicated storage for up to 1,000 attacks with severity classification
 - **ML Models**: Trained on CICIDS-2017 dataset with 95%+ accuracy
 - **Web Dashboard**: React frontend for real-time visualization and alerts
 - **REST API**: FastAPI backend with prediction endpoints
@@ -19,6 +20,8 @@ Packets → Flow Aggregation → Feature Extraction → Stage 1 (Normal Filter) 
 ## Quick Start
 
 See [SETUP.md](SETUP.md) for detailed installation instructions.
+
+**For Evaluation/Demo**: See [DEMO_SCRIPT.md](DEMO_SCRIPT.md) and [EVALUATION_QA.md](EVALUATION_QA.md)
 
 ```powershell
 # Backend
@@ -71,6 +74,15 @@ See [backend/DEMO_GUIDE.md](backend/DEMO_GUIDE.md) for full presentation guide.
 - Node.js 16+
 - Administrator privileges (for packet capture)
 - Npcap/WinPcap (Windows)
+
+## Documentation
+
+- **[SETUP.md](SETUP.md)** - Installation and configuration guide
+- **[DEMO_SCRIPT.md](DEMO_SCRIPT.md)** - Step-by-step demo scenarios
+- **[EVALUATION_QA.md](EVALUATION_QA.md)** - Evaluator questions & answers
+- **[METRICS.md](METRICS.md)** - Performance metrics and evaluation
+- **[EXPLAINABILITY.md](EXPLAINABILITY.md)** - SHAP model interpretation
+- **[backend/DEMO_GUIDE.md](backend/DEMO_GUIDE.md)** - Presentation guide
 
 ## Author
 

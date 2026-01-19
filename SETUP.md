@@ -59,6 +59,25 @@ npm install
 
 ## Running the System
 
+### Set API Token (Important!)
+
+Set the API token before starting the backend:
+
+```powershell
+# Windows PowerShell
+$env:IDS_API_TOKEN = "your-secure-token-here-change-in-production"
+echo $env:IDS_API_TOKEN
+
+#for cmd.exe
+set IDS_API_TOKEN=your-secure-token-here-change-in-production
+echo %IDS_API_TOKEN%
+
+# Or set permanently in your environment variables
+[Environment]::SetEnvironmentVariable("IDS_API_TOKEN", "your-secure-token-here", "User")
+```
+
+> ⚠️ **For demos**: Use the default token or set `$env:IDS_API_TOKEN` before running attacks
+
 ### Start Backend API
 
 Open PowerShell in the `backend` directory:
@@ -92,6 +111,14 @@ npm run dev
 
 ## Testing the System
 
+### Understanding Data Storage
+
+The system uses two circular buffers:
+- **Dashboard (All Events)**: Stores last 500 detections (both normal and attacks)
+- **Threats Page**: Stores last 1,000 attacks only
+
+When limits are reached, oldest entries are automatically removed (FIFO - First In, First Out).
+
 ### Generate Normal Traffic
 
 ```powershell
@@ -102,11 +129,28 @@ Watch the dashboard show "Normal" classifications.
 
 ### Simulate Attacks
 
+**Important**: Set the API token before running attacks:
+
+```powershell
+$env:IDS_API_TOKEN = "your-secure-token-here-change-in-production"
+```
+
+Then run individual attack scripts:
+
 ```powershell
 cd backend
+python attack_dos.py 127.0.0.1
+python attack_ddos.py 127.0.0.1
+python attack_portscan.py 127.0.0.1
+python attack_bruteforce.py 127.0.0.1
+python attack_webattack.py 127.0.0.1
+
+# OR use the unified demo script
 python demo_attack.py 127.0.0.1 dos
+python demo_attack.py 127.0.0.1 ddos
 python demo_attack.py 127.0.0.1 portscan
 python demo_attack.py 127.0.0.1 bruteforce
+python demo_attack.py 127.0.0.1 webattack
 ```
 
 Observe attack alerts in the dashboard with AI-generated mitigation suggestions.
