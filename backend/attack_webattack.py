@@ -8,6 +8,8 @@ import sys
 import random
 import time
 import os
+import urllib.request
+import json
 
 def simulate_webattack(target_ip: str, num_requests: int = 18):
     """
