@@ -93,11 +93,31 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 **Important**: Run PowerShell as Administrator
 
+#### Option 1: General Network Monitor (All Traffic)
+
+Monitors all network traffic on all ports:
+
 ```powershell
 cd backend
 .\.venv\Scripts\Activate.ps1
 python -c "from app.realtime.sniffer import start_sniffing; start_sniffing()"
 ```
+
+#### Option 2: SmartStay Network Monitor (Ports 5000, 8080)
+
+Monitors only SmartStay traffic and reports to the same IDS dashboard:
+
+```powershell
+cd backend
+.\.venv\Scripts\Activate.ps1
+python -c "from app.realtime.sniffer_smartstay import start_sniffing_smartstay; start_sniffing_smartstay()"
+```
+
+This option:
+- ✅ Filters traffic to SmartStay ports only (5000, 8080)
+- ✅ Reports attacks to same IDS frontend (http://localhost:5173)
+- ✅ Adds [SmartStay] prefix to detection messages
+- ✅ Focuses monitoring on your PG booking application
 
 ### Start Frontend Dashboard
 
@@ -139,11 +159,20 @@ Then run individual attack scripts:
 
 ```powershell
 cd backend
+
+# For generic demo (default target: 127.0.0.1:80)
 python attack_dos.py 127.0.0.1
 python attack_ddos.py 127.0.0.1
 python attack_portscan.py 127.0.0.1
 python attack_bruteforce.py 127.0.0.1
 python attack_webattack.py 127.0.0.1
+
+# For SmartStay demo (target: 127.0.0.1:5000)
+python attack_dos.py 127.0.0.1 5000
+python attack_ddos.py 127.0.0.1 5000
+python attack_portscan.py 127.0.0.1 5000
+python attack_bruteforce.py 127.0.0.1 5000
+python attack_webattack.py 127.0.0.1 5000
 
 # OR use the unified demo script
 python demo_attack.py 127.0.0.1 dos
@@ -190,5 +219,6 @@ npm install
 ## Next Steps
 
 1. Review [backend/DEMO_GUIDE.md](backend/DEMO_GUIDE.md) for presentation tips
-2. Check [IDS_final.ipynb](IDS_final.ipynb) to understand model training
-3. Explore the REST API at http://127.0.0.1:8000/docs
+2. **NEW**: Check [SMARTSTAY_DEMO_GUIDE.md](SMARTSTAY_DEMO_GUIDE.md) for SmartStay integration demo
+3. Check [IDS_final.ipynb](IDS_final.ipynb) to understand model training
+4. Explore the REST API at http://127.0.0.1:8000/docs

@@ -17,6 +17,8 @@ FastAPI-powered backend with multi-stage ML detection engine and real-time packe
 - **Memory Management**: Automatic flow expiration
 
 ### 🛡️ Attack Simulators
+
+**Generic Attacks (Default: port 80):**
 - `demo_attack.py`: Unified attack simulation interface
 - `attack_dos.py`: DoS attack generator
 - `attack_ddos.py`: DDoS attack simulator
@@ -25,7 +27,55 @@ FastAPI-powered backend with multi-stage ML detection engine and real-time packe
 - `attack_webattack.py`: Web attack simulator
 - `high_intensity_attack.py`: High-volume attack testing
 
-### 🔐 Security Features
+**SmartStay Integration (Custom port support):**
+
+All attack scripts now support targeting specific ports for real-world application testing:
+
+```powershell
+# Usage: python attack_<type>.py <ip> [port]
+
+# Target SmartStay Backend (port 5000)
+python attack_dos.py 127.0.0.1 5000
+python attack_ddos.py 127.0.0.1 5000
+python attack_portscan.py 127.0.0.1 5000
+python attack_bruteforce.py 127.0.0.1 5000
+python attack_webattack.py 127.0.0.1 5000
+```
+
+**Demo Scripts for SmartStay:**
+- `demo_smartstay.ps1`: Full demo with delays and colored output
+- `demo_smartstay_quick.ps1`: Quick demo without delays
+
+See [SMARTSTAY_DEMO_GUIDE.md](../SMARTSTAY_DEMO_GUIDE.md) for complete integration guide.
+
+### � Real-Time Network Monitoring
+
+**General Network Sniffer (All Ports):**
+```powershell
+python -c "from app.realtime.sniffer import start_sniffing; start_sniffing()"
+```
+
+**SmartStay-Specific Sniffer (Ports 5000, 8080):**
+```powershell
+# Quick launcher
+.\monitor_smartstay.ps1
+
+# Manual command
+python -c "from app.realtime.sniffer_smartstay import start_sniffing_smartstay; start_sniffing_smartstay()"
+```
+
+The SmartStay sniffer:
+- Monitors only SmartStay traffic (ports 5000, 8080)
+- Reports to the same IDS dashboard
+- Adds [SmartStay] context to detections
+- Reduces noise from other network activity
+
+**Requirements:**
+- Administrator privileges
+- Npcap installed (Windows)
+- API token set: `$env:IDS_API_TOKEN`
+
+### �🔐 Security Features
 - **Token-Based Authentication**: Bearer token for protected endpoints
 - **Environment Variables**: Secure token storage
 - **CORS Protection**: Configurable origins

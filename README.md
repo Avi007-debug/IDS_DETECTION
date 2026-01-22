@@ -174,7 +174,7 @@ npm run dev
 
 ## 🎬 Demo & Evaluation
 
-### Simulate Attacks
+### Standard Attack Simulations
 ```powershell
 # DoS Attack Simulation
 python backend/demo_attack.py 127.0.0.1 dos
@@ -191,6 +191,25 @@ python backend/demo_attack.py 127.0.0.1 webattack
 # High-Intensity Attack
 python backend/high_intensity_attack.py
 ```
+
+### 🏨 SmartStay Integration Demo (NEW!)
+
+**Quick Start:**
+```powershell
+cd backend
+.\demo_smartstay.ps1  # Automated demo with all 5 attacks
+```
+
+**Features:**
+- ✅ Real-world application testing (SmartStay PG booking platform)
+- ✅ Targets actual API endpoints (chatbot, health, auth)
+- ✅ Safe local testing (no external traffic)
+- ✅ Complete presentation guide included
+
+**SmartStay Integration Documentation:**
+- 📘 [SMARTSTAY_DEMO_GUIDE.md](SMARTSTAY_DEMO_GUIDE.md) - Complete integration guide
+- 🎯 [SMARTSTAY_QUICK_REFERENCE.md](SMARTSTAY_QUICK_REFERENCE.md) - Quick reference card
+- ⚡ [demo_smartstay.ps1](backend/demo_smartstay.ps1) - Automated demo script
 
 ### Demo Resources
 - 🎥 **[DEMO_GUIDE.md](backend/DEMO_GUIDE.md)** - Complete presentation walkthrough

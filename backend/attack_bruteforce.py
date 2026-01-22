@@ -1,6 +1,6 @@
 """
-Brute Force Attack Simulator
-Simulates rapid authentication attempts (SSH/FTP)
+Brute Force Attack Simulator for SmartStay
+Simulates rapid authentication attempts on SmartStay login endpoint
 """
 from scapy.all import IP, TCP, Raw, send
 import time
@@ -8,22 +8,33 @@ import sys
 import json
 import urllib.request
 import os
+import requests
 
-def simulate_bruteforce_attack(target_ip="127.0.0.1"):
-    print(f"[*] Simulating Brute Force Attack on {target_ip}")
-    print(f"[*] Characteristics: Rapid login attempts, SSH/FTP targeting")
+def simulate_bruteforce_attack(target_ip="127.0.0.1", target_port=5000):
+    print(f"[*] Simulating Brute Force Attack on SmartStay ({target_ip}:{target_port})")
+    print(f"[*] Target: SmartStay Authentication System")
+    print(f"[*] Characteristics: Rapid login attempts, credential stuffing")
     
     port = 1339  # Magic port for BruteForce detection
     
-    # Simulate rapid authentication attempts
+    # Common credential pairs for demonstration
     credentials = [
-        "admin:password123", "root:toor", "admin:admin",
-        "user:user", "test:test", "admin:12345"
+        "admin@smartstay.com:password123",
+        "user@smartstay.com:12345678",
+        "test@smartstay.com:test123",
+        "owner@smartstay.com:owner123",
+        "demo@smartstay.com:demo123",
+        "guest@smartstay.com:guest123"
     ]
     
+    print(f"[*] Attempting credential stuffing on auth endpoint...")
     for i in range(len(credentials) * 5):  # Multiple rounds
         cred = credentials[i % len(credentials)]
-        pkt = IP(dst=target_ip)/TCP(sport=port, dport=22, flags="PA")/Raw(load=f"LOGIN:{cred}")
+        email, password = cred.split(':')
+        
+        # Simulate HTTP login attempt via packet
+        http_payload = f"POST /api/auth/login HTTP/1.1\r\nHost: smartstay\r\nContent-Type: application/json\r\n\r\n{{\"email\":\"{email}\",\"password\":\"{password}\"}}"
+        pkt = IP(dst=target_ip)/TCP(sport=port, dport=target_port, flags="PA")/Raw(load=http_payload)
         send(pkt, verbose=False)
         if i % 10 == 0:
             print(f"    Sent {i}/{len(credentials)*5} login attempts...")
@@ -36,12 +47,12 @@ def simulate_bruteforce_attack(target_ip="127.0.0.1"):
             "src_ip": "192.168.1.102",
             "dst_ip": target_ip,
             "src_port": port,
-            "dst_port": 22,
+            "dst_port": target_port,
             "protocol": "TCP",
             "attack_type": "BruteForce",
             "is_attack": True,
             "confidence": 0.94,
-            "suggestion": "Implement account lockout after 3 failed attempts. Enable 2FA. Use fail2ban."
+            "suggestion": "SmartStay authentication under brute force attack! Implement account lockout after 3 failed attempts. Enable 2FA/MFA. Use fail2ban. Add CAPTCHA to login."
         }
         
         api_token = os.getenv("IDS_API_TOKEN", "your-secure-token-here-change-in-production")
@@ -61,4 +72,7 @@ def simulate_bruteforce_attack(target_ip="127.0.0.1"):
 
 if __name__ == "__main__":
     target = sys.argv[1] if len(sys.argv) > 1 else "127.0.0.1"
-    simulate_bruteforce_attack(target)
+    port = int(sys.argv[2]) if len(sys.argv) > 2 else 5000
+    print(f"\n[SmartStay Brute Force Attack Simulator]")
+    print(f"Target: {target}:{port}\n")
+    simulate_bruteforce_attack(target, port)

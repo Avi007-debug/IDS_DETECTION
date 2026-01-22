@@ -1,6 +1,6 @@
 """
-Port Scan Attack Simulator
-Simulates network reconnaissance via port scanning
+Port Scan Attack Simulator for SmartStay
+Simulates network reconnaissance via port scanning on SmartStay infrastructure
 """
 from scapy.all import IP, TCP, send
 import time
@@ -9,15 +9,17 @@ import json
 import urllib.request
 import os
 
-def simulate_portscan_attack(target_ip="127.0.0.1"):
-    print(f"[*] Simulating Port Scan on {target_ip}")
+def simulate_portscan_attack(target_ip="127.0.0.1", smartstay_port=5000):
+    print(f"[*] Simulating Port Scan on SmartStay ({target_ip})")
+    print(f"[*] Target: SmartStay Backend Infrastructure")
     print(f"[*] Characteristics: Sequential port probing, SYN flags")
     
     port = 1338  # Magic port for PortScan detection
     
-    # Scan common ports
-    common_ports = [21, 22, 23, 25, 80, 443, 445, 3306, 3389, 8080]
+    # Scan SmartStay and common service ports
+    common_ports = [smartstay_port, 8080, 443, 22, 3306, 5432, 27017, 6379, 9000, 3000]
     
+    print(f"[*] Scanning SmartStay infrastructure ports...")
     for i, target_port in enumerate(common_ports * 3):  # Scan each port 3 times
         pkt = IP(dst=target_ip)/TCP(sport=port, dport=target_port, flags="S")
         send(pkt, verbose=False)
@@ -32,12 +34,12 @@ def simulate_portscan_attack(target_ip="127.0.0.1"):
             "src_ip": "192.168.1.101",
             "dst_ip": target_ip,
             "src_port": port,
-            "dst_port": 80,
+            "dst_port": smartstay_port,
             "protocol": "TCP",
             "attack_type": "PortScan",
             "is_attack": True,
             "confidence": 0.95,
-            "suggestion": "Implement port knocking. Disable unused services. Enable IDS/IPS rules."
+            "suggestion": f"SmartStay infrastructure being scanned! Implement port knocking. Disable unused services. Enable IDS/IPS rules. Close ports {smartstay_port}, 3306, 5432."
         }
         
         api_token = os.getenv("IDS_API_TOKEN", "your-secure-token-here-change-in-production")
@@ -57,4 +59,7 @@ def simulate_portscan_attack(target_ip="127.0.0.1"):
 
 if __name__ == "__main__":
     target = sys.argv[1] if len(sys.argv) > 1 else "127.0.0.1"
-    simulate_portscan_attack(target)
+    port = int(sys.argv[2]) if len(sys.argv) > 2 else 5000
+    print(f"\n[SmartStay Port Scan Simulator]")
+    print(f"Target: {target}:{port}\n")
+    simulate_portscan_attack(target, port)
