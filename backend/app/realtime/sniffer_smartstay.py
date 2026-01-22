@@ -85,6 +85,7 @@ def flow_monitor_loop():
             src_ip, dst_ip, sport, dport, proto = key
             
             # Focus on SmartStay ports (5000, 8080)
+            # Check both source and destination ports
             if dport not in [5000, 8080] and sport not in [5000, 8080]:
                 continue
             
@@ -98,6 +99,8 @@ def flow_monitor_loop():
                 suggestion = f"[SmartStay] {suggestion}"
             elif "explanation" in result:
                 suggestion = f"[SmartStay] Safe: {result['explanation']}"
+            else:
+                suggestion = f"[SmartStay] Normal traffic to port {dport}"
             
             detection_entry = {
                 "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -114,7 +117,9 @@ def flow_monitor_loop():
             
             report_to_backend(detection_entry)
 
-            print(f"\n=== SmartStay FLOW DETECTED [{detection_entry['timestamp']}] ===")
+            # Print detection info
+            status_icon = "🚨" if result["is_attack"] else "✅"
+            print(f"\n{status_icon} === SmartStay FLOW DETECTED [{detection_entry['timestamp']}] ===")
             print(f"Flow: {src_ip}:{sport} -> {dst_ip}:{dport} ({proto})")
             print(f"Attack Type: {attack_type} (Confidence: {detection_entry['confidence']:.2f})")
             print(f"Suggestion: {suggestion}")

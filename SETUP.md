@@ -119,6 +119,12 @@ This option:
 - ✅ Adds [SmartStay] prefix to detection messages
 - ✅ Focuses monitoring on your PG booking application
 
+> ⚠️ **IMPORTANT**: When using SmartStay monitor, you MUST run attacks with port 5000:
+> ```powershell
+> python attack_dos.py 127.0.0.1 5000    # ✅ Will be detected
+> python attack_dos.py 127.0.0.1         # ❌ Won't be detected (uses port 80)
+> ```
+
 ### Start Frontend Dashboard
 
 Open a new terminal in the `frontend` directory:
@@ -168,13 +174,17 @@ python attack_bruteforce.py 127.0.0.1
 python attack_webattack.py 127.0.0.1
 
 # For SmartStay demo (target: 127.0.0.1:5000)
+# ⚠️ MUST use port 5000 if SmartStay monitor is running!
 python attack_dos.py 127.0.0.1 5000
 python attack_ddos.py 127.0.0.1 5000
 python attack_portscan.py 127.0.0.1 5000
 python attack_bruteforce.py 127.0.0.1 5000
 python attack_webattack.py 127.0.0.1 5000
 
-# OR use the unified demo script
+# OR use the SmartStay automated demo script
+.\demo_smartstay.ps1
+
+# OR use the unified demo script (generic, not SmartStay)
 python demo_attack.py 127.0.0.1 dos
 python demo_attack.py 127.0.0.1 ddos
 python demo_attack.py 127.0.0.1 portscan
@@ -183,6 +193,63 @@ python demo_attack.py 127.0.0.1 webattack
 ```
 
 Observe attack alerts in the dashboard with AI-generated mitigation suggestions.
+
+### Testing SmartStay Network Monitor
+
+If you're running the **SmartStay Network Monitor** (Option 2 above), follow these steps:
+
+#### 1. Generate Normal SmartStay Traffic
+
+Open SmartStay in your browser and interact with it:
+
+```powershell
+# Open in browser: http://localhost:8080
+# Click around, use the chatbot, search for properties
+# You should see normal traffic in the monitor terminal
+```
+
+Or test API endpoints directly:
+
+```powershell
+# Test SmartStay health endpoint
+curl http://127.0.0.1:5000/health
+
+# Test SmartStay AI chatbot
+curl -X POST http://127.0.0.1:5000/api/ai/chatbot `
+  -H "Content-Type: application/json" `
+  -d '{\"message\":\"Hello\"}'
+```
+
+Watch the SmartStay monitor terminal show traffic like:
+```
+=== SmartStay FLOW DETECTED [2026-01-22 15:45:30] ===
+Flow: 127.0.0.1:xxxxx -> 127.0.0.1:5000 (TCP)
+Attack Type: Normal (Confidence: 0.95)
+Suggestion: [SmartStay] Safe: Normal traffic pattern
+```
+
+#### 2. Simulate Attacks on SmartStay
+
+**Important**: Use port 5000 for all attacks:
+
+```powershell
+cd backend
+$env:IDS_API_TOKEN = "your-secure-token-here-change-in-production"
+
+# Individual attacks
+python attack_dos.py 127.0.0.1 5000
+python attack_ddos.py 127.0.0.1 5000
+python attack_portscan.py 127.0.0.1 5000
+python attack_bruteforce.py 127.0.0.1 5000
+python attack_webattack.py 127.0.0.1 5000
+
+# OR automated demo
+.\demo_smartstay.ps1
+```
+
+Watch the SmartStay monitor detect attacks in real-time with **[SmartStay]** prefix!
+
+---
 
 ## Troubleshooting
 
